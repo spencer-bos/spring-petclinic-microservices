@@ -1,0 +1,20 @@
+ribbon:
+  eager-load:
+    enabled: true
+
+health:
+  config:
+    enabled: false
+
+spring:
+  cloud:
+    config:
+      uri: http://localhost:8888
+  application:
+    name: discovery-server
+---
+spring:
+  profiles: docker
+  cloud:
+    config:
+      uri: http://config-server:8888
