@@ -105,11 +105,11 @@ For pull requests, editor preferences are available in the [editor config](.edit
 # Configuring JRebel and XRebel
 
 You must configure JRebel in the [IDE](https://manuals.zeroturnaround.com/jrebel/misc/integrations.html#ides) of choice. Once the plugin is installed:
- 1a. Inside of Eclipse proceed to Help>JRebel>Configuration>Projects
- 1b. Inside of IntelliJ  proceed to Views>Tool Window>JRebel
- 2. Check all boxes for all services imported into eclipse
- 3. Proceed to remote servers(same for Eclipse and IntelliJ).
- 4. Add server for each endpoint url in the server URL section(i.e Server name: API Gateway; Server URL: http://localhost:8080)
- 5. Add a valid xrebel.lic to the root folder of the spring-petclinic-microservices(same location of the docker-compose.yml)
+ *1a. Inside of Eclipse proceed to Help>JRebel>Configuration>Projects
+ *1b. Inside of IntelliJ  proceed to Views>Tool Window>JRebel
+ *2. Check all boxes for all services imported into eclipse
+ *3. Proceed to remote servers(same for Eclipse and IntelliJ).
+ *4. Add server for each endpoint url in the server URL section(i.e Server name: API Gateway; Server URL: http://localhost:8080)
+ *5. Add a valid xrebel.lic to the root folder of the spring-petclinic-microservices(same location of the docker-compose.yml)
  
  
