@@ -19,10 +19,11 @@ services:
       - /bin/sh
       - -c
       - |
-        wget -O /xrebel/xrebel.zip https://dl.zeroturnaround.com/?token=b99e5cbe3d855eb822cf809953766c1846307a77
+        wget -O /xrebel/xrebel.zip https://s3.amazonaws.com/files.zeroturnaround.com/bin/xrebel-4.0.2.zip
         unzip -O /xrebel/xrebel.zip
     volumes:
       - xrebel-volume:/xrebel 
+      - ./xrebel.lic:/xrebel/xrebel.lic
 
   config-server:
     image: mszarlinski/spring-petclinic-config-server
@@ -30,10 +31,11 @@ services:
 #    mem_limit: 512M
     ports:
      - 8888:8888
-    entrypoint: ["java", "-agentpath:/jrebel/lib/libjrebel64.so", "-Drebel.remoting_plugin=true", "-XX:+UnlockExperimentalVMOptions", "-javaagent:/xrebel/xrebel.jar", "-XX:+UseCGroupMemoryLimitForHeap", "-Djava.security.egd=file:/dev/./urandom", "-jar","/app.jar"]
+    entrypoint: ["java", "${JRebel_ENV}","${JRebel_Remote}","${XRebel_ENV}", "-XX:+UnlockExperimentalVMOptions", "-XX:+UseCGroupMemoryLimitForHeap", "-Djava.security.egd=file:/dev/./urandom", "-jar","/app.jar"]
     volumes:
       - jrebel-volume:/jrebel
       - xrebel-volume:/xrebel
+      - ./xrebel.lic:/xrebel/xrebel.lic
 
   discovery-server:
     image: mszarlinski/spring-petclinic-discovery-server
@@ -41,12 +43,13 @@ services:
 #    mem_limit: 512M
     depends_on:
       - config-server
-    entrypoint: ["./dockerize", "-wait=tcp://config-server:8888", "-timeout=60s", "--", "java", "-agentpath:/jrebel/lib/libjrebel64.so", "-Drebel.remoting_plugin=true", "-javaagent:/xrebel/xrebel.jar", "-XX:+UnlockExperimentalVMOptions", "-XX:+UseCGroupMemoryLimitForHeap", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/app.jar"]
+    entrypoint: ["./dockerize", "-wait=tcp://config-server:8888", "-timeout=60s", "--", "java",  "${JRebel_ENV}","${JRebel_Remote}","${XRebel_ENV}","-XX:+UnlockExperimentalVMOptions", "-XX:+UseCGroupMemoryLimitForHeap", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/app.jar"]
     ports:
      - 8761:8761
     volumes:
       - jrebel-volume:/jrebel
       - xrebel-volume:/xrebel
+      - ./xrebel.lic:/xrebel/xrebel.lic
 
   customers-service:
     image: mszarlinski/spring-petclinic-customers-service
@@ -55,12 +58,13 @@ services:
     depends_on:
      - config-server
      - discovery-server
-    entrypoint: ["./dockerize", "-wait=tcp://discovery-server:8761", "-timeout=60s", "--", "java", "-agentpath:/jrebel/lib/libjrebel64.so", "-Drebel.remoting_plugin=true", "-javaagent:/xrebel/xrebel.jar", "-XX:+UnlockExperimentalVMOptions", "-XX:+UseCGroupMemoryLimitForHeap", "-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
+    entrypoint: ["./dockerize", "-wait=tcp://discovery-server:8761", "-timeout=60s", "--", "java", "${JRebel_ENV}","${JRebel_Remote}","${XRebel_ENV}","-XX:+UnlockExperimentalVMOptions", "-XX:+UseCGroupMemoryLimitForHeap", "-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
     ports:
     - 8081:8081
     volumes:
       - jrebel-volume:/jrebel
       - xrebel-volume:/xrebel
+      - ./xrebel.lic:/xrebel/xrebel.lic
 
   visits-service:
     image: mszarlinski/spring-petclinic-visits-service
@@ -69,12 +73,13 @@ services:
     depends_on:
      - config-server
      - discovery-server
-    entrypoint: ["./dockerize", "-wait=tcp://discovery-server:8761", "-timeout=60s", "--", "java", "-agentpath:/jrebel/lib/libjrebel64.so", "-Drebel.remoting_plugin=true", "-javaagent:/xrebel/xrebel.jar", "-XX:+UnlockExperimentalVMOptions", "-XX:+UseCGroupMemoryLimitForHeap", "-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
+    entrypoint: ["./dockerize", "-wait=tcp://discovery-server:8761", "-timeout=60s", "--", "java",  "${JRebel_ENV}","${JRebel_Remote}","${XRebel_ENV}","-XX:+UnlockExperimentalVMOptions", "-XX:+UseCGroupMemoryLimitForHeap", "-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
     ports:
      - 8082:8082
     volumes:
       - jrebel-volume:/jrebel
       - xrebel-volume:/xrebel
+      - ./xrebel.lic:/xrebel/xrebel.lic
 
   vets-service:
     image: mszarlinski/spring-petclinic-vets-service
@@ -83,12 +88,13 @@ services:
     depends_on:
      - config-server
      - discovery-server
-    entrypoint: ["./dockerize", "-wait=tcp://discovery-server:8761", "-timeout=60s", "--", "java", "-agentpath:/jrebel/lib/libjrebel64.so", "-Drebel.remoting_plugin=true", "-javaagent:/xrebel/xrebel.jar", "-XX:+UnlockExperimentalVMOptions", "-XX:+UseCGroupMemoryLimitForHeap", "-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
+    entrypoint: ["./dockerize", "-wait=tcp://discovery-server:8761", "-timeout=60s", "--", "java",  "${JRebel_ENV}","${JRebel_Remote}","${XRebel_ENV}","-XX:+UnlockExperimentalVMOptions", "-XX:+UseCGroupMemoryLimitForHeap", "-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
     ports:
      - 8083:8083
     volumes:
       - jrebel-volume:/jrebel
       - xrebel-volume:/xrebel
+      - ./xrebel.lic:/xrebel/xrebel.lic
 
   api-gateway:
     image: mszarlinski/spring-petclinic-api-gateway
@@ -97,12 +103,13 @@ services:
     depends_on:
      - config-server
      - discovery-server
-    entrypoint: ["./dockerize", "-wait=tcp://discovery-server:8761", "-timeout=60s", "--", "java", "-agentpath:/jrebel/lib/libjrebel64.so", "-Drebel.remoting_plugin=true", "-javaagent:/xrebel/xrebel.jar", "-XX:+UnlockExperimentalVMOptions", "-XX:+UseCGroupMemoryLimitForHeap", "-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
+    entrypoint: ["./dockerize", "-wait=tcp://discovery-server:8761", "-timeout=60s", "--", "java", "${JRebel_ENV}","${JRebel_Remote}","${XRebel_ENV}", "-XX:+UnlockExperimentalVMOptions", "-XX:+UseCGroupMemoryLimitForHeap", "-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
     ports:
      - 8080:8080
     volumes:
       - jrebel-volume:/jrebel
       - xrebel-volume:/xrebel
+      - ./xrebel.lic:/xrebel/xrebel.lic
     
 
 #   tracing-server:
@@ -123,12 +130,15 @@ services:
     depends_on:
      - config-server
      - discovery-server
-    entrypoint: ["./dockerize", "-wait=tcp://discovery-server:8761", "-timeout=60s", "--", "java", "-agentpath:/jrebel/lib/libjrebel64.so", "-Drebel.remoting_plugin=true", "-javaagent:/xrebel/xrebel.jar", "-XX:+UnlockExperimentalVMOptions", "-XX:+UseCGroupMemoryLimitForHeap", "-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
+    entrypoint: ["./dockerize", "-wait=tcp://discovery-server:8761", "-timeout=60s", "--", "java", "-XX:+UnlockExperimentalVMOptions", "-XX:+UseCGroupMemoryLimitForHeap", "-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
     ports:
      - 9090:9090
     volumes:
       - jrebel-volume:/jrebel
       - xrebel-volume:/xrebel
+      - ./xrebel.lic:/xrebel/xrebel.lic
+    environment:
+    - JAVA_OPTS=$JRebel_ENV $JRebel_Remote $XRebel_ENV
 
 volumes:
   jrebel-volume:
